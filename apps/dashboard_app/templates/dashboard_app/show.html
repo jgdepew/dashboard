@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Profile</title>
+	<meta charset="utf-8">
+</head>
+<body>
+
+	<div id="header">
+		<p>Test App | <a href="{% url 'dashboard:dashboard' %}">Dashboard</a> | <a href="{% url 'dashboard:users_id' id=request.session.id %}">Profile</a> | <a href="{% url 'dashboard:process_logout' %}"><button>Logout</button></a></p>
+	</div>
+
+	<div id="bio">
+		<h2>{{user.first_name}} {{user.last_name}}</h2>	
+		<p>User ID: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{user.id}}</p>
+		<p>Email Address: &nbsp;{{user.email}}</p>
+		<p>Description: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{user.description}}</p>
+	</div>
+
+		{% if user.id == request.session.id or request.session.user_level == 9 %}
+			<p><a href="{% url 'dashboard:update' id=user.id %}">Edit Profile</a></p>
+		{% endif %}
+
+	<form action="{% url 'dashboard:process_message' id=user.id %}" method="post">
+		{% csrf_token %}
+		<p><input type="text" name="message" placeholder="Post a message!"></p>
+		<input type="submit" value="Post">
+	</form>
+
+	{% for message in messages %}
+		<p>{{message.user.first_name}} {{message.user.last_name}} said "{{message.message}}" at {{message.created_at}}</p>
+		{% for comment in comments %}
+			{% if message.id == comment.message.id %} 
+				<p>{{comment.user.first_name}} {{comment.user.last_name}} said "{{comment.comment}}" at {{comment.created_at}}</p>
+			{% endif %}
+		{% endfor %}
+		<form action="{% url 'dashboard:process_comment' id=user.id %}" method="post">
+			{% csrf_token %}
+			<input type="hidden" name="message" value="{{message.id}}">
+			<p><input type="text" name="comment" placeholder="Post a comment!"></p>
+			<input type="submit" value="Comment">
+		</form>
+	{% endfor %}
+
+</body>
+</html>

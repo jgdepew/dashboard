@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Register</title>
+</head>
+<body>
+
+	<h3>Register</h3>
+	<form method='post' action="{% url 'dashboard:process_registration' %}">
+		{% csrf_token %}
+		<p>Email Address</p>
+		<input type="text" name="email"><br>
+		<p>First Name:</p>
+		<input type="text" name="first_name"><br>
+		<p>Last Name:</p>
+		<input type="text" name="last_name"><br>
+		<p>Password:</p>
+		<input type="text" name="password1"><br>
+		<p>Confirm Password:</p>
+		<input type="text" name="password2"><br>
+		<input type="submit" value="Register">
+	</form>
+	{% if messages %}
+	<ul class="messages">
+	    {% for message in messages %}
+	    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+	    {% endfor %}
+	</ul>
+	{% endif %}
+	<a href="{% url 'dashboard:login' %}">Already have an account? Login here.</a>
+
+</body>
+</html>
